@@ -54,8 +54,10 @@ const ExpenseSummary = () => {
             <p className="text-2xl font-bold text-expense-dark">
               {highestCategory.name !== "none" ? (
                 <>
-                  <span>{highestCategory.name}</span>
-                  <span>{formatCurrency(highestCategory.amount)}</span>
+                  <span className="capitalize">{highestCategory.name}</span>
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    ({formatCurrency(highestCategory.amount)})
+                  </span>
                 </>
               ) : (
                 "None"

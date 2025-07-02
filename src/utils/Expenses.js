@@ -61,7 +61,7 @@ export const getCategoryTextColor = (category) => {
 };
 
 export const getMonthName = (date) => {
-  return date.toLocaleString("default", { month: "long " });
+  return date.toLocaleString("default", { month: "long" });
 };
 
 export const getExpensesByMonth = (expenses, numMonths = 6) => {

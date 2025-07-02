@@ -2,27 +2,24 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 const ExpenseContext = createContext();
 
-const initialValue = {
-  expenses: [],
-  error: null,
+const initialState = {
+  expenses: JSON.parse(localStorage.getItem("expenses")) || [],
   loading: false,
+  error: null,
 };
 
-const ExpenseReducer = (state, action) => {
+const expenseReducer = (state, action) => {
   switch (action.type) {
-    case "ADD_EXPENSES":
-      return {
-        ...state,
-        expenses: [...state.expenses, action.payload],
-      };
-    case "DELETE_EXPENSES":
+    case "ADD_EXPENSE":
+      return { ...state, expenses: [...state.expenses, action.payload] };
+    case "DELETE_EXPENSE":
       return {
         ...state,
         expenses: state.expenses.filter(
           (expense) => expense.id !== action.payload.id
         ),
       };
-    case "UPDATE_EXPENSES":
+    case "UPDATE_EXPENSE":
       return {
         ...state,
         expenses: state.expenses.map((expense) =>
@@ -30,65 +27,43 @@ const ExpenseReducer = (state, action) => {
         ),
       };
     case "SET_EXPENSES":
-      return {
-        ...state,
-        expenses: action.payload,
-      };
+      return { ...state, expenses: action.payload };
     case "SET_LOADING":
-      return {
-        ...state,
-        loading: action.payload,
-      };
+      return { ...state, loading: action.payload };
     case "SET_ERROR":
-      return {
-        ...state,
-        error: action.payload,
-      };
+      return { ...state, error: action.payload };
     default:
       return state;
   }
 };
 
 export const ExpenseProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(ExpenseReducer, initialValue);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("Expenses");
-      if (stored) {
-        dispatch({ type: "SET_EXPENSES", payload: JSON.parse(stored) });
-      }
-    } catch (error) {
-      console.error("Failed to load expenses:", error);
-      dispatch({ type: "SET_ERROR", payload: "Failed to load expenses" });
-    }
-  }, []);
+  const [state, dispatch] = useReducer(expenseReducer, initialState);
 
   useEffect(() => {
     try {
       localStorage.setItem("Expenses", JSON.stringify(state.expenses));
     } catch (error) {
-      console.error("Failed to save expenses:", error);
-      dispatch({ type: "SET_ERROR", payload: "Failed to save expenses" });
+      console.error("Failed to save expenses to local storage: ", error);
+      dispatch({ type: "SET_ERROR", payload: error });
     }
   }, [state.expenses]);
 
   const value = {
     ...state,
-    addExpenses: (expenses) => {
-      const newExpenses = {
-        ...expenses,
+    addExpense: (expense) => {
+      const newExpense = {
+        ...expense,
         id: crypto.randomUUID(),
+        category: expense.category.toLowerCase()
       };
-      dispatch({ type: "ADD_EXPENSES", payload: newExpenses });
+      dispatch({ type: "ADD_EXPENSE", payload: newExpense });
     },
-
-    deleteExpenses: (id) => {
-      dispatch({ type: "DELETE_EXPENSES", payload: { id } });
+    deleteExpense: (id) => {
+      dispatch({ type: "DELETE_EXPENSE", payload: { id } });
     },
-
-    updateExpenses: (expenses) => {
-      dispatch({ type: "UPDATE_EXPENSES", payload: expenses });
+    updateExpense: (expense) => {
+      dispatch({ type: "UPDATE_EXPENSE", payload: expense });
     },
   };
 
@@ -99,7 +74,6 @@ export const ExpenseProvider = ({ children }) => {
 
 export const useExpenses = () => {
   const context = useContext(ExpenseContext);
-
   if (context === undefined) {
     throw new Error("useExpenses must be used within an ExpenseProvider");
   }
