@@ -20,9 +20,9 @@ const ExpenseForm = () => {
     { value: "other", label: "Other" },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsSubmiting(true);
     try {
       if (!description.trim()) {
         throw new Error("Please enter a description");
@@ -32,7 +32,7 @@ const ExpenseForm = () => {
         throw new Error("Please enter a valid amount");
       }
 
-      addExpense({
+      await addExpense({
         description: description.trim(),
         amount: Number(amount),
         category,

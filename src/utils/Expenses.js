@@ -1,3 +1,6 @@
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../lib/firebase";
+
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -86,4 +89,39 @@ export const getExpensesByMonth = (expenses, numMonths = 6) => {
   });
 
   return result;
+};
+
+export const createuserProfile = async (user) => {
+  if (!user) return;
+  const userRef = doc(db, "users", user.uid);
+  const snapshot = await getDoc(userRef);
+  if (!snapshot.exists()) {
+    await setDoc(userRef, {
+      name: user.displayName || "Anonymous",
+      email: user.email,
+      photoURL: user.photoURL || "/public/profile_image.png",
+    });
+  }
+};
+
+export const uploadToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append(
+    "upload_preset",
+    import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  );
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${
+      import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+    }/image/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url; // This is your uploaded image URL
 };

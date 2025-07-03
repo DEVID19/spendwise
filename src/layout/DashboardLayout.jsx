@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
+import EditProfile from "../components/EditProfile";
 
 const DashboardLayout = ({ children }) => {
+  const { user, logout } = useAuth();
+  const [showModel, setShowModel] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Toaster
@@ -29,11 +34,31 @@ const DashboardLayout = ({ children }) => {
       />
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-center md:justify-between items-center">
-            <h1 className="text-3xl font-bold text-expense">SpendWise</h1>
-            <p className="hidden md:block text-gray-500">
-              Track your expenses with ease
-            </p>
+          <div className="flex justify-center md:justify-between items-center gap-2 md:gap-0">
+            <h1 className="text-3xl font-bold text-expense">
+              SpendWise <span className="text-sm text-expense text-center">({user.displayName}'s Expenses)</span>
+            </h1>
+            <div className="justify-center items-center flex  gap-4">
+              <button
+                onClick={() => setShowModel(true)}
+                className="w-10 h-10 cursor-pointer rounded-full overflow-hidden border-2 border-gray-300 hover:border-[#7e69ab] transition"
+              >
+                <img
+                  src={
+                    user?.photoURL ||
+                    "/public/profile_image.png"
+                  }
+                  alt="User"
+                  className="w-full h-full object-cover"
+                />
+              </button>
+              <button
+                className="w-20 h-10 rounded-md p-2 border-gray-300 border-2 hover:border-[#7e69ab] transition bg-[#7e69ab]  text-white font-bold cursor-pointer"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -49,6 +74,7 @@ const DashboardLayout = ({ children }) => {
           </p>
         </div>
       </footer>
+      {showModel && <EditProfile onClose={() => setShowModel(false)} />}
     </div>
   );
 };
