@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import { createuserProfile } from "../utils/Expenses";
 
@@ -17,19 +18,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+ 
+useEffect(() => {
+  let unsubscribe;
+
+  const checkAuth = async () => {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result?.user) {
+        await createuserProfile(result.user);
+        setUser(result.user);
+      }
+    } catch (err) {
+      console.error("Redirect sign-in error:", err);
+    }
+
+    unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        await createuserProfile(user); // <-- add this to always ensure user doc exists
+        await createuserProfile(user);
       } else {
         setUser(null);
       }
       setLoading(false);
     });
+  };
 
-    return () => unsubscribe();
-  }, []);
+  checkAuth();
+
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
+}, []);
+
+
 
   const signup = async (email, password) => {
     const res = await createUserWithEmailAndPassword(auth, email, password);
