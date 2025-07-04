@@ -7,6 +7,7 @@ import {
   getCategoryTextColor,
 } from "../utils/Expenses";
 import { Trash2 } from "lucide-react";
+import ExportButton from "./ExportButton";
 
 const ExpenseList = () => {
   const { expenses, deleteExpense } = useExpenses();
@@ -35,14 +36,14 @@ const ExpenseList = () => {
   };
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-expense-dark">
+      <div className="flex md:justify-between justify-center md:gap-0 gap-4 items-center mb-4">
+        <h2 className="md:text-2xl text-md font-semibold text-expense-dark">
           Expense History
         </h2>
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-3 py-1 rounded-md border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-expense-light focus:border-transparent"
+          className="md:px-3 md:py-1 px-1 py-1 rounded-md border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-expense-light focus:border-transparent"
         >
           {categoryOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -50,6 +51,7 @@ const ExpenseList = () => {
             </option>
           ))}
         </select>
+        <ExportButton />
       </div>
 
       {sortedExpenses.length === 0 ? (

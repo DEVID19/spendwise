@@ -1,5 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Papa from "papaparse";
+import toast from "react-hot-toast";
 
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-IN", {
@@ -123,5 +125,34 @@ export const uploadToCloudinary = async (file) => {
   );
 
   const data = await res.json();
-  return data.secure_url; // This is your uploaded image URL
+  return data.secure_url;
+};
+
+// Function to export expenses to CSV
+// Uses PapaParse to convert JSON to CSV format
+
+export const exportExpensesToCSV = (expenses) => {
+  if (!expenses || expenses.length === 0) {
+    toast("No expenses to export.");
+    return;
+  }
+
+  const formatted = expenses.map((exp) => ({
+    Description: exp.description,
+    Amount: exp.amount,
+    Category: exp.category,
+    Date: exp.createdAt?.toDate().toLocaleDateString() || "", // format Firestore timestamp
+  }));
+
+  const csv = Papa.unparse(formatted);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "expenses.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  toast.success("Expenses exported successfully!");
 };

@@ -8,7 +8,7 @@ const DashboardLayout = ({ children }) => {
   const [showModel, setShowModel] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -36,7 +36,7 @@ const DashboardLayout = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-center md:justify-between items-center gap-2 md:gap-0">
             <h1 className="text-3xl font-bold text-expense">
-              SpendWise <span className="text-sm text-expense text-center">({user.displayName}'s Expenses)</span>
+              SpendWise <span className="text-sm text-expense ">({user.displayName}'s Expenses)</span>
             </h1>
             <div className="justify-center items-center flex  gap-4">
               <button
@@ -70,7 +70,7 @@ const DashboardLayout = ({ children }) => {
       <footer className="bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-center text-gray-500 text-sm">
-            Budget Wow Tracker &copy; {new Date().getFullYear()}
+            SpendWise &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>

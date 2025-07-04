@@ -98,7 +98,6 @@ export const ExpenseProvider = ({ children }) => {
     };
 
     const docRef = await addDoc(collection(db, "expenses"), newExpense);
-    console.log("Document written with ID: ", docRef.id);
 
     dispatch({
       type: "ADD_EXPENSE",
