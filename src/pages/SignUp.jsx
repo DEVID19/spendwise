@@ -9,11 +9,13 @@ const SignUp = () => {
   const { signup, googleSignIn, loading, user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && user) {
-      navigate("/dashboard");
-    }
-  }, [user, loading]);
+ useEffect(() => {
+  if (loading) return;
+
+  if (user) {
+    navigate("/dashboard");
+  }
+}, [user, loading, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();

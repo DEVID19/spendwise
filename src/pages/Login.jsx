@@ -10,10 +10,12 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) {
+    if (loading) return;
+
+    if (user) {
       navigate("/dashboard");
     }
-  }, [user, loading]);
+  }, [user, loading, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
