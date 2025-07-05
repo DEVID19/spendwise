@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,8 +6,15 @@ import { Link, useNavigate } from "react-router-dom";
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signup, googleSignIn } = useAuth();
+  const { signup, googleSignIn, loading, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard");
+    }
+  }, [user, loading]);
+
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
@@ -21,7 +28,6 @@ const SignUp = () => {
   const handleGoogleSignUp = async () => {
     try {
       await googleSignIn();
-      navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     }
@@ -30,7 +36,9 @@ const SignUp = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f0f2f5] p-4">
       <div className="bg-white shadow-md rounded-2xl p-6 w-full max-w-md flex flex-col gap-4">
-        <h1 className="text-center text-[#7e69ab] font-bold text-2xl">Sign Up</h1>
+        <h1 className="text-center text-[#7e69ab] font-bold text-2xl">
+          Sign Up
+        </h1>
         <form onSubmit={handleSignup} className="flex flex-col gap-4">
           <input
             type="email"

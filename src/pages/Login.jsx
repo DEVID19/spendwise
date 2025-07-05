@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,8 +6,14 @@ import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, googleSignIn } = useAuth();
+  const { login, googleSignIn, loading, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard");
+    }
+  }, [user, loading]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +33,7 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
-      navigate("/dashboard");
+      // navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     }
