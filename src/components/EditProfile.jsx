@@ -40,7 +40,7 @@ const EditProfile = ({ onClose }) => {
           name,
           email: user.email,
           photoURL:
-            photoURL || "/public/profile_image.png",
+            photoURL || "/profile_image.png",
         });
       }
 
