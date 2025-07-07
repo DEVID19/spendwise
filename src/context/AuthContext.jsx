@@ -18,38 +18,66 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // useEffect(() => {
+  //   let unsubscribe;
+
+  //   const checkAuth = async () => {
+  //     try {
+  //       const result = await getRedirectResult(auth);
+  //       if (result?.user) {
+  //         await createuserProfile(result.user);
+  //         setUser(result.user);
+  //       }
+  //     } catch (err) {
+  //       console.error("Redirect sign-in error:", err);
+  //     }
+
+  //     unsubscribe = onAuthStateChanged(auth, async (user) => {
+  //       console.log("onAuthStateChanged triggered. User is:", user);
+  //       if (user) {
+  //         setUser(user);
+  //         await createuserProfile(user);
+  //       } else {
+  //         setUser(null);
+  //       }
+  //       setLoading(false);
+  //     });
+  //   };
+
+  //   checkAuth();
+
+  //   return () => {
+  //     if (unsubscribe) unsubscribe();
+  //   };
+  // }, []);
+
   useEffect(() => {
-    let unsubscribe;
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    console.log("onAuthStateChanged triggered. User is:", user);
 
-    const checkAuth = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          await createuserProfile(result.user);
-          setUser(result.user);
-        }
-      } catch (err) {
-        console.error("Redirect sign-in error:", err);
+    try {
+      // First, handle redirect result (mainly for mobile sign-in)
+      const result = await getRedirectResult(auth);
+      if (result?.user) {
+        await createuserProfile(result.user);
+        setUser(result.user);
+      } else if (user) {
+        await createuserProfile(user);
+        setUser(user);
+      } else {
+        setUser(null);
       }
+    } catch (err) {
+      console.error("Redirect sign-in error:", err);
+      setUser(null);
+    }
 
-      unsubscribe = onAuthStateChanged(auth, async (user) => {
-        console.log("onAuthStateChanged triggered. User is:", user);
-        if (user) {
-          setUser(user);
-          await createuserProfile(user);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      });
-    };
+    setLoading(false);
+  });
 
-    checkAuth();
+  return () => unsubscribe();
+}, []);
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
 
   const signup = async (email, password) => {
     const res = await createUserWithEmailAndPassword(auth, email, password);
