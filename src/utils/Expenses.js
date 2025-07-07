@@ -44,7 +44,7 @@ export const getExpensesByCategory = (expenses) => {
 export const getChartData = (expenses) => {
   const expensesByCategory = getExpensesByCategory(expenses);
   return Object.entries(expensesByCategory)
-    .filter(([__, value]) => value > 0)
+    .filter(([, value]) => value > 0)
     .map(([name, value]) => ({
       name: name.charAt(0).toUpperCase() + name.slice(1),
       value,

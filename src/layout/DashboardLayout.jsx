@@ -36,7 +36,7 @@ const DashboardLayout = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-center md:justify-between items-center gap-2 md:gap-0">
             <h1 className="text-3xl font-bold text-expense">
-              SpendWise <span className="text-sm text-expense ">({user.displayName}'s Expenses)</span>
+              SpendWise <span className="text-sm text-expense ">({user.displayName || "Users"}'s Expenses)</span>
             </h1>
             <div className="justify-center items-center flex  gap-4">
               <button

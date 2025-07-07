@@ -27,7 +27,8 @@ const ExpensePieChart = ({ data }) => {
   }
 
   const getColor = (name) => {
-    return CATEGORY_COLORS[name] || "#8E9196";
+    const key = name.trim();
+    return CATEGORY_COLORS[key] || "#8E9196";
   };
 
   const CustomTooltip = ({ active, payload }) => {
