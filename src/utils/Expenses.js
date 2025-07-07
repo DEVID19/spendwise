@@ -131,18 +131,61 @@ export const uploadToCloudinary = async (file) => {
 // Function to export expenses to CSV
 // Uses PapaParse to convert JSON to CSV format
 
+// export const exportExpensesToCSV = (expenses) => {
+//   if (!expenses || expenses.length === 0) {
+//     toast("No expenses to export.");
+//     return;
+//   }
+
+//   const formatted = expenses.map((exp) => ({
+//     Description: exp.description,
+//     Amount: exp.amount,
+//     Category: exp.category,
+//     Date: exp.createdAt?.toDate().toLocaleDateString() || "", // format Firestore timestamp
+//   }));
+
+//   const csv = Papa.unparse(formatted);
+//   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+//   const url = URL.createObjectURL(blob);
+
+//   const link = document.createElement("a");
+//   link.href = url;
+//   link.setAttribute("download", "expenses.csv");
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+//   toast.success("Expenses exported successfully!");
+// };
+
 export const exportExpensesToCSV = (expenses) => {
   if (!expenses || expenses.length === 0) {
     toast("No expenses to export.");
     return;
   }
 
-  const formatted = expenses.map((exp) => ({
-    Description: exp.description,
-    Amount: exp.amount,
-    Category: exp.category,
-    Date: exp.createdAt?.toDate().toLocaleDateString() || "", // format Firestore timestamp
-  }));
+  const formatted = expenses.map((exp) => {
+    let date = "";
+    try {
+      const raw = exp.createdAt;
+      const convertedDate =
+        raw instanceof Date
+          ? raw
+          : typeof raw?.toDate === "function"
+          ? raw.toDate()
+          : new Date(raw);
+
+      date = convertedDate.toLocaleDateString("en-IN");
+    } catch (err) {
+      console.error("Date format error:", err);
+    }
+
+    return {
+      Description: exp.description,
+      Amount: exp.amount,
+      Category: exp.category,
+      Date: date,
+    };
+  });
 
   const csv = Papa.unparse(formatted);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
