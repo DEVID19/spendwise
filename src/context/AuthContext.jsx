@@ -9,6 +9,8 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { createuserProfile } from "../utils/Expenses";
 
@@ -50,6 +52,13 @@ export const AuthProvider = ({ children }) => {
   //     if (unsubscribe) unsubscribe();
   //   };
   // }, []);
+
+  // ✅ 1. Set auth persistence on mount
+  useEffect(() => {
+    setPersistence(auth, browserLocalPersistence).catch((err) => {
+      console.error("Persistence error:", err);
+    });
+  }, []);
 
   useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, async (user) => {
