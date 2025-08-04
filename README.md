@@ -83,6 +83,7 @@ src/
 git clone https://github.com/DEVID19/spendwise.git
 cd spendwise
 npm install
+npm run dev
 ---
 ### 2. Add Environment Variables
 
